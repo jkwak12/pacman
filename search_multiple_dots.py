@@ -81,7 +81,7 @@ def dotDistance(graph,dot1,dot2):
 			continue
 		visited.add(current)
 		for neighbour in graph[current]:
-			heapq.heappush(priority_queue,(g + manhattan(current,goal), g+1, path + [neighbour], neighbour))
+			heapq.heappush(priority_queue,(g + manhattan(neighbour,goal), g+1, path + [neighbour], neighbour))
 
 
 
@@ -224,7 +224,7 @@ def find_path_astar(graph, start, goal):
 			continue
 		visited.add(current)
 		for neighbour in graph[current]:
-			heapq.heappush(priority_queue,(g + manhattan(current,goal), g+1, path + [neighbour], neighbour))
+			heapq.heappush(priority_queue,(g + manhattan(neighbour,goal), g+1, path + [neighbour], neighbour))
 
 
 def find_path_multi_astar(graph,visitOrder):
