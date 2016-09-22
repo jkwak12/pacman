@@ -89,7 +89,7 @@ def find_path_astar(maze):
 			continue
 		visited.add(current)
 		for neighbour in graph[current]:
-			heapq.heappush(priority_queue,(g + heuristic(current,goal), g+1, path + [neighbour], neighbour))
+			heapq.heappush(priority_queue,(g + heuristic(neighbour,goal), g+1, path + [neighbour], neighbour))
 	
 
 def find_path_greedy_best_first(maze):
@@ -106,7 +106,7 @@ def find_path_greedy_best_first(maze):
 			continue
 		visited.add(current)
 		for neighbour in graph[current]:
-			heapq.heappush(priority_queue,(heuristic(current,goal), path + [neighbour], neighbour))
+			heapq.heappush(priority_queue,(heuristic(neighbour,goal), path + [neighbour], neighbour))
 
 def getDots(maze):
 	dots = []
@@ -139,7 +139,7 @@ def dotDistance(dot1, dot2):
 			continue
 		visited.add(current)
 		for neighbour in graph[current]:
-			heapq.heappush(priority_queue,(g + heuristic(current,goal), g+1, path + [neighbour], neighbour))
+			heapq.heappush(priority_queue,(g + heuristic(neighbour,goal), g+1, path + [neighbour], neighbour))
 
 #will return a dictionary with distances as a main value.
 #Approximate run time is ----> (runtime of A* search)(n^2-n)/2, where n = # of dots in maze
@@ -173,7 +173,7 @@ def find_distance_astar(maze, pos1, pos2):
 			continue
 		visited.add(current)
 		for neighbour in graph[current]:
-			heapq.heappush(priority_queue,(g + heuristic(current,goal), g+1, path + [neighbour], neighbour))
+			heapq.heappush(priority_queue,(g + heuristic(neighbour,goal), g+1, path + [neighbour], neighbour))
 
 #will essentially perform part 1.2 of the MP
 '''		As of this current build, the list "solutions" will hold the order of dots visited in the (hopefully)
