@@ -285,27 +285,6 @@ def find_path_astar_multi_extra(graph, start, dots):
 			heapq.heappush(priority_queue,(g + dotHeuristic_extra(graph,neighbour,dots), g+1, path + [neighbour], neighbour))
 
 
-'''........................................bfs for debugging...........................................'''
-
-
-def find_path_bfs(graph, start, dots):
-	queue = deque ([([start], start)])
-	visited = set()
-	while queue:
-		path,current = queue.popleft()
-		if not len(dots):
-			return total_path
-		if current in dots:
-			dots.remove(current)
-			visited = set()
-			total_path = path
-			queue = deque ([([current], current)])
-		if current in visited:
-			continue
-		visited.add(current)
-		for neighbour in graph[current]:
-			queue.append((path + [neighbour], neighbour))
-
 
 #assume the list 'dots' is already in the order they were eaten in
 #also added back in the printing of dots along the path since a TA in office hours
