@@ -458,6 +458,6 @@ if animate == 'y' or animate == 'Y' or animate == 'yes':
 
 ''' Print path and path length '''
 print('\nPath length is', len(path), '(including start position of pacman)')
-print('Path length is', (len(path) - 1), '(NOT including start position of pacman)')
+#print('Path length is', (len(path) - 1), '(NOT including start position of pacman)')
 print('Expanded node count is', expanded)
 print('Solution path and/or order of dots traversed printed as solution.txt in current directory...')
