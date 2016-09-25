@@ -172,7 +172,7 @@ def dotHeuristic_extra(graph, cell, dots):
 	for i in range(2):
 		distances = []
 		for dot in next_dots:
-			distances.append((dot, manhattan(next_position,dot)))
+			distances.append((dot, dotDistance(next_position,dot)))
 		#Object = (cell, dot)
 		if (len(distances) == 0):
 			break
