@@ -5,6 +5,7 @@ import time
 import shutil
 import os
 from collections import deque
+import pdb
 
 Maze = open(sys.argv[1]).read().split('\n')
 #Maze = open('MediumMaze.txt').read().split('\n')
@@ -129,7 +130,7 @@ def dotHeuristic(graph, cell,dots):
 	for i in range(2):
 		distances = []
 		for dot in next_dots:
-			distances.append((dot,dotDistance(graph, next_position,dot)))
+			distances.append((dot, manhattan(next_position,dot)))
 		#Object = (cell, dot)
 		if (len(distances) == 0):
 			break
@@ -189,20 +190,24 @@ def find_path_astar_multi(graph, start, dots):
 	priority_queue = []
 	path_continued = []
 	total_path = []
+	dotOrder = []
 	#goals = dots
 	heapq.heappush(priority_queue, (0+dotHeuristic(graph,start,dots), 0, [start], start))
 	visited = set()
+	expanded = 0
 	#graph = maze2graph(maze)
 	while priority_queue:
 		cost, g, path, current = heapq.heappop(priority_queue)
 		
 		
 		if not len(dots):
-			return total_path
+			return (total_path, expanded, dotOrder)
 		
 		if current in dots:
 			dots.remove(current)
+			dotOrder.append(current)
 			total_path = path
+			expanded += len(visited)
 			visited = set()
 			priority_queue = []
 
@@ -250,7 +255,7 @@ def animate_path(maze, dots, path):
 		writePacman = 1
 		f.close()
 	frame = 0
-	delay = 0.2  		#the delay between frames. The more dots, the shorter the delay
+	delay = 0.1  		#the delay between frames. The more dots, the shorter the delay
 	while frame < frameNumber:
 		os.system('cls' if os.name == 'nt' else 'clear')		#clear screen
 		f = open('animation/frame' + str(frame) + '.txt')
@@ -271,7 +276,7 @@ print('\n')
 if process == 'multi':
 	#path,visited = find_path_dots(Maze)
 	graph = maze2graph(Maze)
-	path = find_path_astar_multi(graph, pacman, dots)
+	path, expanded, dotOrder = find_path_astar_multi(graph, pacman, dots)
 	#sys.exit()		#force quit script. Not elegant, I know
 elif process == 'single':
 	method = raw_input("\nEnter the algorithm you wish to use (dfs, bfs, greedy, a*): ")
@@ -290,37 +295,59 @@ elif process == 'single':
 		sys.exit()
 
 
-dots_original = getDots(Maze)
-animate_path(Maze,dots_original,path)
+#dots_original = getDots(Maze)
+animate_path(Maze,dotOrder,path)
 
 #following print routines work if we're just path finding (single dot)
 print ("Width of maze:", len(Maze[0]))
 print ("Height of maze:", len(Maze))
-#print ("Total nodes calculated:", (len(visited)))
+print ("Total nodes calculated:", (expanded))
 print ("Length of calculated path:", (len(path)))
 print ("Solution.txt was printed in directory")
 #print (Maze)
 
-for i in range(len(Maze)):
-	for j in range(len(Maze[0])):
-		if (i,j) in path and not (i,j) == getStart(Maze) and not (i,j) == getGoal(Maze):
-			print('.', end = '')
-		else:
-			print(Maze[i][j], end = '')
-	print('\n')
+
 
 
 
 #**********Solution***********
-f = open('solution.txt','w')
-for i in range(len(Maze)):
-	for j in range(len(Maze[0])):
-		if (i,j) in path and not (i,j) == getStart(Maze) and not (i,j) == getGoal(Maze):
-			f.write('.')
-			#print(".")
-		else:
-			f.write(Maze[i][j])
-			#print(Maze[i][j])
-	f.write('\n')
 
+'''Just drag this method into your main file somewhere'''
+
+
+#assume the list 'dots' is already in the order they were eaten in
+#also added back in the printing of dots along the path since a TA in office hours
+#		said that they wanted the visible path alongside the order of dots eaten
+def write_dots_eaten(maze, dots, path):
+	f = open('solution.txt','w+')
+	start = path[0]
+	goal = path[len(path) - 1]
+	for i in range(len(maze)):
+		for j in range(len(maze[0])):
+			if (i,j) in path and not (i,j) == start and not (i,j) == goal:
+				f.write('.')
+			else:
+				f.write(Maze[i][j])
+		f.write('\n')	
+	'''done writing maze state with path of dots'''
+
+	'''now including the order of initial dots eaten'''	
+	f.seek(0,0)	#move file cursor to beginning
+	contents = f.read()
+	count = 48		#ascii value for '0'
+	for dot in dots:
+		x = dot[1]	#column value 
+		y = dot[0]	#row value
+		index = y*(len(maze[0]) + 1) + x
+		contents = contents[:index] + chr(count) + contents[index+1:]	#some crazy offset
+		count += 1
+		if(count == 58): 	#is this ascii value '10'?
+			count = 97		#ascii value for 'a'
+		elif(count == 123):	#is this value greater than alphabet length?
+			count = 65		#ascii value for 'A'
+	f.seek(0,0)
+	f.write(contents)
+	f.close()
+
+write_dots_eaten(Maze, dotOrder, path)
 #print(Solution)
