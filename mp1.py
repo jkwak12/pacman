@@ -136,7 +136,7 @@ def find_path_greedy_best_first(maze):
 
 ''' heuristic = astar distance to closest dot + astar distance from the closest dot found to the farthest dot
 '''
-def dotHeuristic(graph, cell, dots):
+def dotHeuristic(graph, cell,dots):
 	heuristic = 0
 	next_position = cell
 	next_dots = dots
@@ -144,7 +144,7 @@ def dotHeuristic(graph, cell, dots):
 	for i in range(2):
 		distances = []
 		for dot in next_dots:
-			distances.append((dot,dotDistance(graph, next_position,dot)))
+			distances.append((dot, manhattan(next_position,dot)))
 		#Object = (cell, dot)
 		if (len(distances) == 0):
 			break
@@ -219,22 +219,22 @@ def find_path_astar_multi(graph, start, dots):
 	priority_queue = []
 	path_continued = []
 	total_path = []
-	solutions = []
-	expanded = 0
+	dotOrder = []
 	#goals = dots
 	heapq.heappush(priority_queue, (0+dotHeuristic(graph,start,dots), 0, [start], start))
 	visited = set()
+	expanded = 0
 	#graph = maze2graph(maze)
 	while priority_queue:
 		cost, g, path, current = heapq.heappop(priority_queue)
 		
 		
 		if not len(dots):
-			return (total_path, solutions, expanded)
+			return (total_path, dotOrder, expanded)
 		
 		if current in dots:
 			dots.remove(current)
-			solutions.append(current)
+			dotOrder.append(current)
 			total_path = path
 			expanded += len(visited)
 			visited = set()
@@ -457,7 +457,7 @@ if animate == 'y' or animate == 'Y' or animate == 'yes':
 	animate_path(Maze,  path)
 
 ''' Print path and path length '''
-print('Path length is', len(path), '(including start position of pacman)')
+print('\nPath length is', len(path), '(including start position of pacman)')
 print('Path length is', (len(path) - 1), '(NOT including start position of pacman)')
 print('Expanded node count is', expanded)
 print('Solution path and/or order of dots traversed printed as solution.txt in current directory...')
